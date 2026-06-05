@@ -1,0 +1,6 @@
+{
+  "painAlwaysConservative": true,
+  "recentLowerFatigueThreshold": 18,
+  "highFatigueThreshold": 20,
+  "accessoryTimeCapMinutes": 40
+}

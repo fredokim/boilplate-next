@@ -1,0 +1,26 @@
+.page {
+  display: grid;
+  min-height: calc(100vh - 80px);
+  place-items: center;
+  padding: 40px 20px;
+}
+
+.panel {
+  width: min(460px, 100%);
+}
+
+.heading {
+  margin-bottom: 18px;
+}
+
+.heading h1 {
+  margin: 0;
+  color: var(--color-ink);
+  font-size: 34px;
+}
+
+.heading p {
+  margin: 8px 0 0;
+  color: var(--color-muted);
+  line-height: 1.6;
+}

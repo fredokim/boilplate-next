@@ -1,0 +1,101 @@
+.toast {
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-md);
+  padding: 14px;
+  box-shadow: var(--shadow-sm);
+}
+
+.toastTitle {
+  margin: 0;
+  font-weight: 800;
+}
+
+.toastMessage {
+  margin: 6px 0 0;
+  line-height: 1.5;
+}
+
+.info {
+  background: rgb(239 246 255);
+  color: rgb(30 64 175);
+}
+
+.success {
+  background: rgb(236 253 245);
+  color: rgb(4 120 87);
+}
+
+.danger {
+  background: rgb(254 242 242);
+  color: rgb(185 28 28);
+}
+
+.modalBackdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: grid;
+  place-items: center;
+  background: rgb(15 23 42 / 0.45);
+  padding: 16px;
+}
+
+.modal {
+  width: min(100%, 520px);
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-md);
+  background: var(--color-panel);
+  padding: 20px;
+  box-shadow: var(--shadow-sm);
+}
+
+.modalHeader {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.modalTitle {
+  margin: 0;
+  color: var(--color-ink);
+}
+
+.modalDescription {
+  margin: 6px 0 0;
+  color: var(--color-muted);
+}
+
+.tabs {
+  display: grid;
+  gap: 14px;
+}
+
+.tabList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.tabButton {
+  min-height: 36px;
+  border: 0;
+  border-radius: var(--radius-md);
+  background: rgb(241 245 249);
+  padding: 0 12px;
+  color: var(--color-muted);
+  cursor: pointer;
+  font-weight: 800;
+}
+
+.tabButtonActive {
+  background: var(--color-primary);
+  color: white;
+}
+
+.tabPanel {
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-md);
+  background: var(--color-panel);
+  padding: 16px;
+}

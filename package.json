@@ -6,19 +6,57 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint . --max-warnings=0",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "storybook": "storybook dev -p 6008 --disable-telemetry",
+    "build-storybook": "storybook build --disable-telemetry",
+    "e2e": "playwright test",
+    "generate": "tsx scripts/generate.ts",
+    "generate:contract": "tsx scripts/generate-contract.ts",
+    "generate:form": "tsx scripts/generate-form.ts",
+    "generate:layout": "tsx scripts/generate-layout.ts",
+    "generate:page": "tsx scripts/generate-page.ts",
+    "check:automation": "tsx scripts/check-automation.ts",
+    "check:bundle": "tsx scripts/check-bundle-budget.ts",
+    "check:deps": "tsx scripts/check-dependency-size.ts",
+    "check:ci": "npm run lint && npm run typecheck && npm run test && npm run check:automation && npm run check:deps && npm run build && npm run check:bundle && npm run build-storybook"
   },
   "dependencies": {
+    "@tanstack/react-query": "^5.100.14",
+    "class-transformer": "^0.5.1",
+    "class-validator": "^0.15.1",
     "next": "16.2.6",
     "react": "19.2.4",
-    "react-dom": "19.2.4"
+    "react-dom": "19.2.4",
+    "reflect-metadata": "^0.2.2",
+    "zod": "^4.4.3",
+    "zustand": "^5.0.14"
+  },
+  "overrides": {
+    "postcss": "^8.5.15"
   },
   "devDependencies": {
+    "@playwright/test": "^1.60.0",
+    "@storybook/addon-docs": "^10.4.1",
+    "@storybook/nextjs-vite": "^10.4.1",
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.2",
+    "@testing-library/user-event": "^14.6.1",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "axe-core": "^4.11.4",
     "eslint": "^9",
     "eslint-config-next": "16.2.6",
-    "typescript": "^5"
+    "eslint-config-prettier": "^10.1.8",
+    "jsdom": "^29.1.1",
+    "msw": "^2.14.6",
+    "sass": "^1.100.0",
+    "storybook": "^10.4.1",
+    "tsx": "^4.22.3",
+    "typescript": "^5",
+    "vitest": "^4.1.7",
+    "vitest-axe": "^0.1.0"
   }
 }
