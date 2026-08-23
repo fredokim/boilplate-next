@@ -3,6 +3,7 @@
 import { useState } from "react";
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { Checkbox } from "./Checkbox";
+import { Input } from "./Input";
 import { RadioGroup } from "./RadioGroup";
 import { Select } from "./Select";
 
@@ -19,9 +20,17 @@ type Story = StoryObj<typeof meta>;
 
 function FormControlsDemo() {
   const [role, setRole] = useState("admin");
+  const [hostname, setHostname] = useState("rt-core-01");
 
   return (
     <div style={{ display: "grid", gap: 20, maxWidth: 440 }}>
+      <Input
+        hint="Used as the display name across the topology views."
+        label="Hostname"
+        name="hostname"
+        onChange={(event) => setHostname(event.target.value)}
+        value={hostname}
+      />
       <Select
         label="Role"
         name="role"
@@ -64,6 +73,14 @@ export const SelectError: Story = {
           { label: "Admin", value: "admin" },
         ]}
       />
+    </div>
+  ),
+};
+
+export const InputError: Story = {
+  render: () => (
+    <div style={{ maxWidth: 440 }}>
+      <Input error="Hostname is already in use." label="Hostname" name="hostname" defaultValue="rt-core-01" />
     </div>
   ),
 };
