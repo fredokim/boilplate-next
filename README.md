@@ -173,6 +173,7 @@ npm audit --audit-level=moderate
 - `DEPENDENCY_STRATEGY.md`: package replacement and dependency review rules.
 - `AI_DEVELOPMENT_GUIDE.md`: rules for AI-assisted implementation in the App Router.
 - `API_CONTRACT.md`: response envelope, the server/client clients, and failure classification.
+- `VISUAL_GRAPH.md`: layer map, client boundary, realtime pipeline, and editing model for the graph example.
 - `AI_WORKFLOW.md`: AI-assisted frontend workflow and verification gates.
 - `PROMPT_PLAYBOOK.md`: reusable prompts for implementation, review, refactoring, and testing.
 - `CODE_REVIEW_CHECKLIST.md`: senior FE review checklist for AI-generated code.
