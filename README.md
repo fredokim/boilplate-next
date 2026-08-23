@@ -174,6 +174,7 @@ npm audit --audit-level=moderate
 - `AI_DEVELOPMENT_GUIDE.md`: rules for AI-assisted implementation in the App Router.
 - `API_CONTRACT.md`: response envelope, the server/client clients, and failure classification.
 - `VISUAL_GRAPH.md`: layer map, client boundary, realtime pipeline, and editing model for the graph example.
+- `REALTIME_INTEGRATION.md`: binding the streaming layer inside the App Router, hydration rules, and where the stream may start.
 - `AI_WORKFLOW.md`: AI-assisted frontend workflow and verification gates.
 - `PROMPT_PLAYBOOK.md`: reusable prompts for implementation, review, refactoring, and testing.
 - `CODE_REVIEW_CHECKLIST.md`: senior FE review checklist for AI-generated code.
