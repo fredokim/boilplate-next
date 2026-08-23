@@ -166,10 +166,13 @@ npm audit --audit-level=moderate
 
 ## More Docs
 
+- `DESIGN_RATIONALE.md`: problem definition, component design method, key decisions, results, and retrospective.
 - `ARCHITECTURE.md`: ownership rules and server/client boundaries.
 - `BOUNDARY_GUIDE.md`: detailed App Router boundary guide.
 - `CONTRIBUTING.md`: checklist for feature and UI additions.
 - `DEPENDENCY_STRATEGY.md`: package replacement and dependency review rules.
+- `AI_DEVELOPMENT_GUIDE.md`: rules for AI-assisted implementation in the App Router.
+- `API_CONTRACT.md`: response envelope, the server/client clients, and failure classification.
 - `AI_WORKFLOW.md`: AI-assisted frontend workflow and verification gates.
 - `PROMPT_PLAYBOOK.md`: reusable prompts for implementation, review, refactoring, and testing.
 - `CODE_REVIEW_CHECKLIST.md`: senior FE review checklist for AI-generated code.
