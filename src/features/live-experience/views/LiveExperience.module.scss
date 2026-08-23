@@ -52,7 +52,8 @@
   flex-direction: column;
 }
 
-.viewport {
+.playerViewport {
+  position: relative;
   aspect-ratio: 16 / 9;
   background: #020617;
 }
@@ -144,13 +145,38 @@
   color: #b91c1c;
 }
 
+.viewport {
+  position: relative;
+  min-height: 0;
+}
+
 .messages {
   display: flex;
   height: 420px;
   flex-direction: column;
-  gap: var(--space-4);
   overflow-y: auto;
   padding: var(--space-4);
+}
+
+.spacer {
+  position: relative;
+  width: 100%;
+}
+
+.jump {
+  position: absolute;
+  bottom: var(--space-3);
+  left: 50%;
+  transform: translateX(-50%);
+  border: 0;
+  border-radius: 999px;
+  background: var(--color-primary);
+  padding: 6px 14px;
+  color: white;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 700;
+  box-shadow: var(--shadow-sm);
 }
 
 .emptyMessages {
@@ -160,9 +186,14 @@
 }
 
 .message {
+  position: absolute;
+  top: 0;
+  left: 0;
   display: flex;
+  width: 100%;
   align-items: flex-start;
   gap: 10px;
+  padding-bottom: var(--space-4);
 }
 
 .profile {
@@ -213,4 +244,74 @@
   border-radius: var(--radius-md);
   background: var(--color-surface);
   padding: 4px 7px;
+}
+
+.live {
+  position: absolute;
+  top: var(--space-3);
+  left: var(--space-3);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border: 0;
+  border-radius: 999px;
+  background: rgb(15 23 42 / 0.72);
+  padding: 5px 10px;
+  color: white;
+  cursor: pointer;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+}
+
+.live:disabled {
+  cursor: default;
+}
+
+.liveDot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #f87171;
+}
+
+.liveEdge .liveDot {
+  background: #ef4444;
+  animation: live-pulse 2s ease-in-out infinite;
+}
+
+@keyframes live-pulse {
+  50% {
+    opacity: 0.35;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .liveEdge .liveDot {
+    animation: none;
+  }
+}
+
+.playerError {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  border-top: 1px solid var(--color-line);
+  background: #fef2f2;
+  padding: var(--space-3) 18px;
+  color: #b91c1c;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.retry {
+  border: 1px solid #fca5a5;
+  border-radius: var(--radius-md);
+  background: white;
+  padding: 5px var(--space-3);
+  color: #b91c1c;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 700;
 }
