@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState, useSyncExternalStore } from "react";
+import { useHydrationSafeValue } from "@/hooks/useHydrationSafeValue.client";
 import { parseWodArchiveText } from "@/parser/wodArchiveParser";
 import { parseWod } from "@/parser/wodParser";
 import { emptyFatigueScore, scoreFatigue } from "@/planner/fatigueScorer";
@@ -142,6 +143,73 @@ function normalizePlannerState(saved: Partial<PlannerState>): PlannerState {
   };
 }
 
+type PlannerStateUpdate = PlannerState | ((current: PlannerState) => PlannerState);
+
+const plannerListeners = new Set<() => void>();
+let cachedInitialState: PlannerState | null = null;
+let cachedPlannerState: PlannerState | null = null;
+
+// localStorage is an external store, so it is read through useSyncExternalStore instead of being
+// copied into state from an effect. Snapshots are compared by identity, so each one is cached
+// rather than rebuilt on every call.
+function getInitialPlannerState(): PlannerState {
+  if (cachedInitialState === null) {
+    cachedInitialState = createInitialState();
+  }
+
+  return cachedInitialState;
+}
+
+function loadPlannerState(): PlannerState {
+  try {
+    const saved = window.localStorage.getItem(storageKey);
+
+    return saved === null ? getInitialPlannerState() : normalizePlannerState(JSON.parse(saved) as Partial<PlannerState>);
+  } catch {
+    // Unavailable or corrupt storage falls back to a fresh planner instead of breaking the render.
+    return getInitialPlannerState();
+  }
+}
+
+function getPlannerState(): PlannerState {
+  if (cachedPlannerState === null) {
+    cachedPlannerState = loadPlannerState();
+  }
+
+  return cachedPlannerState;
+}
+
+function subscribeToPlannerState(onStoreChange: () => void): () => void {
+  plannerListeners.add(onStoreChange);
+
+  return () => {
+    plannerListeners.delete(onStoreChange);
+  };
+}
+
+function setPlannerState(update: PlannerStateUpdate): void {
+  const current = getPlannerState();
+  const next = typeof update === "function" ? update(current) : update;
+
+  if (next === current) {
+    return;
+  }
+
+  cachedPlannerState = next;
+
+  try {
+    window.localStorage.setItem(storageKey, JSON.stringify(next));
+  } catch {
+    // Persistence is best effort; the in-memory snapshot stays authoritative.
+  }
+
+  plannerListeners.forEach((listener) => listener());
+}
+
+function getHasLoadedStorage(): boolean {
+  return true;
+}
+
 function createConfirmedWorkout(
   source: ConfirmedWorkout["source"],
   today: WodInputType,
@@ -218,25 +286,13 @@ function getAbilityScores(entries: WodArchiveEntry[], attendanceLog: AttendanceE
 }
 
 export function WodPlanner() {
-  const [state, setState] = useState<PlannerState>(() => createInitialState());
-  const [hasLoadedStorage, setHasLoadedStorage] = useState(false);
+  // Hydration renders the same server snapshot the prerendered HTML was built from; the stored
+  // planner is only picked up on the post-hydration re-render.
+  const state = useSyncExternalStore(subscribeToPlannerState, getPlannerState, getInitialPlannerState);
+  const hasLoadedStorage = useHydrationSafeValue(false, getHasLoadedStorage);
   const [archiveImportText, setArchiveImportText] = useState("");
   const [archiveImportKind, setArchiveImportKind] = useState<WorkoutKind>("crossfit");
   const [recordDraft, setRecordDraft] = useState<Omit<PersonalRecord, "id">>(emptyRecord);
-
-  useEffect(() => {
-    const saved = window.localStorage.getItem(storageKey);
-    if (saved) {
-      setState(normalizePlannerState(JSON.parse(saved) as Partial<PlannerState>));
-    }
-    setHasLoadedStorage(true);
-  }, []);
-
-  useEffect(() => {
-    if (hasLoadedStorage) {
-      window.localStorage.setItem(storageKey, JSON.stringify(state));
-    }
-  }, [hasLoadedStorage, state]);
 
   const todayWod = useMemo(() => parseWod(state.today), [state.today]);
   const tomorrowWod = useMemo(() => parseWod(state.tomorrow), [state.tomorrow]);
@@ -256,18 +312,18 @@ export function WodPlanner() {
   );
 
   function updateWod(day: "today" | "tomorrow", value: WodInputType): void {
-    setState((current) => ({ ...current, [day]: value }));
+    setPlannerState((current) => ({ ...current, [day]: value }));
   }
 
   function updateRecentWorkout(index: number, nextEntry: RecentWorkoutEntry): void {
-    setState((current) => ({
+    setPlannerState((current) => ({
       ...current,
       recentWorkouts: current.recentWorkouts.map((entry, entryIndex) => (entryIndex === index ? nextEntry : entry)),
     }));
   }
 
   function setAttendance(date: string, status: AttendanceStatus, wodId?: string): void {
-    setState((current) => ({
+    setPlannerState((current) => ({
       ...current,
       attendanceLog: [
         ...current.attendanceLog.filter((entry) => entry.date !== date),
@@ -281,14 +337,14 @@ export function WodPlanner() {
   }
 
   function confirmWorkout(source: ConfirmedWorkout["source"]): void {
-    setState((current) => ({
+    setPlannerState((current) => ({
       ...current,
       confirmedWorkout: createConfirmedWorkout(source, current.today, recommendation.type, recommendation.title),
     }));
   }
 
   function updateResult(nextResult: Partial<CompletionResult>): void {
-    setState((current) => {
+    setPlannerState((current) => {
       if (!current.confirmedWorkout) {
         return current;
       }
@@ -304,7 +360,7 @@ export function WodPlanner() {
   }
 
   function completeWorkout(): void {
-    setState((current) => {
+    setPlannerState((current) => {
       if (!current.confirmedWorkout) {
         return current;
       }
@@ -345,7 +401,7 @@ export function WodPlanner() {
       fallbackDate: state.today.date,
       workoutKind: archiveImportKind,
     });
-    setState((current) => ({ ...current, wodArchive: mergeArchive(current.wodArchive, entries) }));
+    setPlannerState((current) => ({ ...current, wodArchive: mergeArchive(current.wodArchive, entries) }));
     setArchiveImportText("");
   }
 
@@ -354,7 +410,7 @@ export function WodPlanner() {
       return;
     }
 
-    setState((current) => ({
+    setPlannerState((current) => ({
       ...current,
       personalRecords: [
         {
@@ -403,7 +459,7 @@ export function WodPlanner() {
                     checked={state.painFlags[option.key]}
                     type="checkbox"
                     onChange={(event) =>
-                      setState((current) => ({
+                      setPlannerState((current) => ({
                         ...current,
                         painFlags: { ...current.painFlags, [option.key]: event.target.checked },
                       }))
@@ -495,7 +551,7 @@ export function WodPlanner() {
               <button type="button" onClick={completeWorkout}>
                 완료 저장
               </button>
-              <button type="button" onClick={() => setState((current) => ({ ...current, confirmedWorkout: null }))}>
+              <button type="button" onClick={() => setPlannerState((current) => ({ ...current, confirmedWorkout: null }))}>
                 확정 취소
               </button>
             </div>
