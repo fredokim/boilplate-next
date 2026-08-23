@@ -14,6 +14,9 @@ const eslintConfig = defineConfig([
     "build/**",
     "next-env.d.ts",
     "storybook-static/**",
+    // Agent worktrees are full checkouts nested inside the repo; linting them
+    // reports every problem twice and drowns real findings.
+    ".claude/worktrees/**",
   ]),
   {
     rules: {
