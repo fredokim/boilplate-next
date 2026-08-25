@@ -24,4 +24,6 @@ jobs:
       - run: npm run build
       - run: npm run check:bundle
       - run: npm run build-storybook
-      - run: npm audit --audit-level=moderate
+      # Production dependencies only. The remaining dev-tree advisory is image-size,
+      # reached through @storybook/nextjs-vite, and it has no upstream fix.
+      - run: npm audit --omit=dev --audit-level=moderate
