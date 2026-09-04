@@ -84,3 +84,37 @@ export async function proxyToBackend(request: Request, path: string): Promise<Ne
 
   return response;
 }
+
+/**
+ * Stores the access token the backend just issued, without disturbing the
+ * cookies already on the response.
+ *
+ * `NextResponse.cookies.set()` cannot be used for this. It rebuilds the whole
+ * `set-cookie` header from its own map, and building that map reads the
+ * existing headers back as a single comma-joined string -- the exact corruption
+ * `getSetCookie` above exists to avoid, one layer up. The visible effect in
+ * production was that the backend's refresh cookie disappeared: sign-in
+ * succeeded and returned only this cookie, and nothing logged anything.
+ *
+ * On login that ends the session at the access token's lifetime. On refresh it
+ * is worse, because the backend rotates the refresh token and treats a reused
+ * one as a replay: the next attempt revokes the whole family and signs the user
+ * out.
+ */
+export async function captureAccessToken(response: NextResponse): Promise<NextResponse> {
+  const clone = response.clone();
+  const payload: unknown = await clone.json().catch(() => null);
+  const token = (payload as { data?: { accessToken?: unknown } } | null)?.data?.accessToken;
+
+  if (typeof token !== "string") return response;
+
+  const attributes = [`${ACCESS_TOKEN_COOKIE}=${token}`, "Path=/", "HttpOnly", "SameSite=Lax"];
+
+  // Deliberately a session cookie: the access token is short-lived and the
+  // refresh cookie is what survives a restart.
+  if (process.env.NODE_ENV === "production") attributes.push("Secure");
+
+  response.headers.append("set-cookie", attributes.join("; "));
+
+  return response;
+}
