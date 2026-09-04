@@ -28,7 +28,7 @@ async function captureAccessToken(response: NextResponse): Promise<NextResponse>
 }
 
 export async function POST(request: Request) {
-  if (isServerBacked) return captureAccessToken(await proxyToBackend(request, "/api/auth/login"));
+  if (isServerBacked) return captureAccessToken(await proxyToBackend(request, "/api/auth/refresh"));
 
   return NextResponse.json(
     createApiSuccess({
