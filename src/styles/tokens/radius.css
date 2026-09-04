@@ -1,3 +1,8 @@
+/*
+ * AUTO-GENERATED. Do not edit.
+ * Source: tokens/tokens.json (web.radius)
+ * Regenerate: npm run tokens:build
+ */
 :root {
   --radius-sm: 6px;
   --radius-md: 8px;

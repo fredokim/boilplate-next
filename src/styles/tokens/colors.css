@@ -1,11 +1,16 @@
+/*
+ * AUTO-GENERATED. Do not edit.
+ * Source: tokens/tokens.json (web.color)
+ * Regenerate: npm run tokens:build
+ */
 :root {
   --color-ink: #172033;
   --color-muted: #647084;
-  --color-line: #dbe3ef;
-  --color-surface: #f7f9fc;
+  --color-line: #d8dee8;
+  --color-surface: #f8fafc;
   --color-panel: #ffffff;
   --color-primary: #2563eb;
   --color-primary-strong: #1d4ed8;
   --color-danger: #dc2626;
-  --color-success: #15803d;
+  --color-success: #168a52;
 }
