@@ -1,5 +1,6 @@
 import type { GraphDocument } from '../model/graph';
 import { MockTopologyTransport } from './mockTransport';
+import type { TopologyRealtimeTransport } from './transport';
 import type {
   EdgeRuntimeState,
   EdgeRuntimeStatus,
@@ -51,10 +52,28 @@ class ScriptedMockTransport extends MockTopologyTransport {
   }
 }
 
-export type GraphRuntimeSource = {
+/**
+ * What the viewer actually needs: something to connect to and a snapshot to
+ * seed from. The scripted mock satisfies it, and so does the server transport.
+ *
+ * The viewer used to take the mock type directly, which is why server mode had
+ * nowhere to plug in.
+ */
+export type GraphRealtimeSource = {
+  topologyId: string;
+  transport: TopologyRealtimeTransport;
+  loadSnapshot: RuntimeSnapshotProvider;
+  /**
+   * Starts the scripted event generator and returns a stop function. Absent on
+   * a server source — a fabricated stream on top of the gateway's real one
+   * would be indistinguishable from real traffic in the UI.
+   */
+  driveEvents?: () => () => void;
+};
+
+export type GraphRuntimeSource = GraphRealtimeSource & {
   topologyId: string;
   transport: ScriptedMockTransport;
-  loadSnapshot: RuntimeSnapshotProvider;
   createEvent: (index: number) => TopologyRealtimeEvent;
   eventsPerSecond: number;
   disconnectAfterMs: number;
@@ -129,13 +148,26 @@ export function createGraphRuntimeSource(
     return { eventId: `edge-metric-${String(sequence)}`, topologyId, entityId, timestamp, sequence, type: 'EDGE_METRIC_UPDATED', payload: { metrics } };
   };
 
+  const scriptedTransport = new ScriptedMockTransport(options.initialEvents ?? [], options.disconnectAfterMs ?? 0);
+  const perSecond = options.eventsPerSecond ?? 10;
+
   return {
     topologyId,
-    transport: new ScriptedMockTransport(options.initialEvents ?? [], options.disconnectAfterMs ?? 0),
+    transport: scriptedTransport,
     loadSnapshot,
     createEvent,
-    eventsPerSecond: options.eventsPerSecond ?? 10,
+    eventsPerSecond: perSecond,
     disconnectAfterMs: options.disconnectAfterMs ?? 0,
+    // Spread rather than an explicit undefined: absent is what "this source
+    // generates nothing" means, and that is how a server source is recognised.
+    ...(perSecond
+      ? {
+          driveEvents: () => {
+            scriptedTransport.startStress(perSecond, createEvent);
+            return () => scriptedTransport.stopStress();
+          },
+        }
+      : {}),
   };
 }
 

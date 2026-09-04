@@ -16,7 +16,13 @@ import { backendEndpoint, isServerBacked } from "@/core/config/backend";
  * the browser. They have no server of their own to hold it; this app does, and
  * a boilerplate about server boundaries should use it.
  */
-export const ACCESS_TOKEN_COOKIE = "nb_access";
+/**
+ * The name is the backend's, not this app's. Its WebSocket gateways read the
+ * access token from a cookie by this name when the handshake carries no query
+ * token — which is the case here, because the page never holds the token and so
+ * cannot put it in a socket URL.
+ */
+export const ACCESS_TOKEN_COOKIE = "rb_access";
 
 /**
  * Forwards a route handler's request to the shared backend.

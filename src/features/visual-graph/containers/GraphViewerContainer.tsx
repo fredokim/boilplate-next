@@ -19,7 +19,7 @@ import { exportGraph, importGraph } from "../editing/graphSerialization";
 import { createLayoutCoordinator, createWorkerLayoutExecutor } from "../layout/layoutCoordinator";
 import { useTopologyRealtime } from "../realtime/useTopologyRealtime";
 import { createGraphRuntimeSource, type GraphRuntimeSource } from "../realtime/graphRuntimeSource";
-import { networkRuntimeSource } from "../network/networkRealtime";
+import { networkRealtimeSource } from "../network/networkRealtime";
 
 type NetworkGraph = GraphDocument<NetworkNodeType, NetworkNodeMetadata, NetworkEdgeMetadata>;
 
@@ -70,7 +70,7 @@ export default function GraphViewerContainer({
   const [validationErrors, setValidationErrors] = useState<readonly GraphValidationError[]>(initialValidationErrors);
   const [saving, setSaving] = useState(false);
   const runtimeSource = useMemo(
-    () => realtimeSource ?? (graph === networkGraph ? networkRuntimeSource : createGraphRuntimeSource(graph)),
+    () => realtimeSource ?? (graph === networkGraph ? networkRealtimeSource : createGraphRuntimeSource(graph)),
     [graph, realtimeSource],
   );
   const selectedNodeId = interaction.selection.nodeIds[0] ?? null;
@@ -83,10 +83,9 @@ export default function GraphViewerContainer({
   });
 
   useEffect(() => {
-    if (!runtimeSource.eventsPerSecond) return undefined;
-    const { createEvent, eventsPerSecond, transport } = runtimeSource;
-    transport.startStress(eventsPerSecond, createEvent);
-    return () => transport.stopStress();
+    // Only the scripted mock has a driver. A server source leaves this absent,
+    // so the demo's synthetic stream cannot run on top of the gateway's real one.
+    return runtimeSource.driveEvents?.();
   }, [runtimeSource]);
 
   useEffect(() => {
