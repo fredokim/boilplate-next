@@ -1,0 +1,39 @@
+# Render blueprint for the Next.js client.
+#
+# A Node service, not a static export. `next.config.ts` rewrites forward /api
+# to the shared backend, and those rewrites are what relay the two WebSocket
+# gateways -- an App Router route handler cannot relay an HTTP upgrade, which
+# is why the sockets go through rewrites and the rest through the proxy route.
+# A static export would have neither.
+
+services:
+  - type: web
+    name: next-boilerplate
+    runtime: node
+    plan: free
+    region: oregon
+    buildCommand: npm ci && npm run build
+    startCommand: npm run start
+
+    envVars:
+      - key: NODE_VERSION
+        value: "22"
+
+      # Server-only, and deliberately without the NEXT_PUBLIC_ prefix: the
+      # backend's address is not something the browser needs, and a public
+      # variable would be inlined into the client bundle.
+      #
+      # This has to be present at BUILD time, not only at run time. rewrites()
+      # is evaluated while `next build` runs and returns an empty list when
+      # BACKEND_URL is unset, so a build without it produces an image where the
+      # WebSocket paths are forwarded nowhere -- and setting the variable
+      # afterwards does not undo that. Render exposes env vars to the build, so
+      # this works; the trap is only there if the variable is added later
+      # without a rebuild.
+      - key: BACKEND_URL
+        sync: false
+
+      # Server mode. The app asserts this matches how it was built rather than
+      # falling back to mocks in production.
+      - key: NEXT_PUBLIC_DATA_MODE
+        value: server
