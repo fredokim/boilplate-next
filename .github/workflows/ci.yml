@@ -19,6 +19,9 @@ jobs:
       - run: npm run lint
       - run: npm run typecheck
       - run: npm run test
+      # Two directions: what the route handlers forward must exist on the
+      # backend, and what the client calls must be answered here.
+      - run: npm run check:contract
       - run: npm run check:ai
       - run: npm run check:automation
       - run: npm run build

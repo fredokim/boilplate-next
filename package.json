@@ -10,6 +10,8 @@
     "lint": "eslint . --max-warnings=0",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
+    "check:contract": "vitest run src/test/contract",
+    "contract:sync": "node -e \"require('node:fs').copyFileSync(process.env.SERVER_REPO ? process.env.SERVER_REPO + '/openapi.json' : '../boilplate-server/openapi.json', 'contracts/openapi.json')\"",
     "storybook": "storybook dev -p 6008 --disable-telemetry",
     "build-storybook": "storybook build --disable-telemetry",
     "e2e": "playwright test",
@@ -25,7 +27,7 @@
     "check:deps": "tsx scripts/check-dependency-size.ts",
     "tokens:build": "tsx scripts/build-tokens.ts",
     "check:tokens": "tsx scripts/check-tokens.ts",
-    "check:ci": "npm run check:tokens && npm run lint && npm run typecheck && npm run test && npm run check:ai && npm run check:automation && npm run check:generators && npm run check:deps && npm run build && npm run check:bundle && npm run build-storybook"
+    "check:ci": "npm run check:tokens && npm run lint && npm run typecheck && npm run test && npm run check:contract && npm run check:ai && npm run check:automation && npm run check:generators && npm run check:deps && npm run build && npm run check:bundle && npm run build-storybook"
   },
   "dependencies": {
     "@dagrejs/dagre": "^3.1.1",
