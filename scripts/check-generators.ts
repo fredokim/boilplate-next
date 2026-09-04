@@ -117,6 +117,17 @@ if (!rejectedPath) failures.push("generate-feature.ts accepted a name containing
 
 cleanup();
 
+/**
+ * `generate.ts` must delegate rather than keep its own copy. It used to hold
+ * an inlined version that produced a different, incomplete result, so which
+ * command you typed decided whether the contract was followed.
+ */
+const entryPoint = readFileSync(join(ROOT, "scripts/generate.ts"), "utf-8");
+
+if (!entryPoint.includes("scripts/generate-feature.ts")) {
+  failures.push("scripts/generate.ts does not delegate feature generation to generate-feature.ts");
+}
+
 if (failures.length > 0) {
   console.error(failures.map((failure) => `- ${failure}`).join("\n"));
   console.error("\nSee FEATURE_CONTRACT.md for what a generated feature must contain.");

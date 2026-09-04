@@ -206,3 +206,22 @@ enough to produce the block.
 `TOKEN_INVENTORY.md` in the React repository records what the three sets looked
 like before they were merged, including two tokens that were deliberately not
 merged.
+
+## Feature generator
+
+```bash
+npm run generate:feature -- billing-report
+```
+
+Writes both halves: the view, its stylesheet, story, and test under
+`src/features/`, and `page.tsx` under `src/app/`. Routing here is the file
+system, so a feature folder alone reaches nothing.
+
+The generated view is a **server component**, and `check:generators` fails if
+that ever changes. Interactivity belongs in a `.client.tsx` rendered from the
+server view, the way `dashboard` and `auth` already do it.
+
+`FEATURE_CONTRACT.md` records what a generated feature contains and why.
+`npm run check:generators` runs the generator and checks its output against the
+contract; it is part of `check:ci`. Regenerating over an existing feature
+refuses rather than overwriting.
