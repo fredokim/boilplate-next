@@ -38,11 +38,29 @@ export const createNetworkEvent = networkRuntimeSource.createEvent;
 function createServerNetworkSource(): GraphRealtimeSource {
   let lastSequence = 0;
 
+  /**
+   * Seeds the resume point from the snapshot, which is the whole reason a
+   * resync ends anywhere.
+   *
+   * The first version reset `lastSequence` to 0 and reconnected. Subscribing
+   * from 0 is what the server answers with `resync-required: behind-retention`
+   * in the first place, so it reproduced the condition it was recovering from —
+   * connect, resync, close, connect, roughly once a second, forever. A fresh
+   * snapshot carries the revision it reflects, and subscribing from there is
+   * the only value that does not immediately fall behind retention again.
+   */
+  async function loadSnapshot(topologyId: string) {
+    const snapshot = await fetchTopologySnapshot(topologyId);
+
+    lastSequence = snapshot.revision;
+
+    return snapshot;
+  }
+
   const transport = new ServerTopologyTransport({
     getLastSequence: () => lastSequence,
     onResyncRequired: () => {
-      lastSequence = 0;
-      void transport.connect(networkTopologyId);
+      void loadSnapshot(networkTopologyId).then(() => transport.connect(networkTopologyId));
     },
   });
 
@@ -53,7 +71,7 @@ function createServerNetworkSource(): GraphRealtimeSource {
   return {
     topologyId: networkTopologyId,
     transport,
-    loadSnapshot: (topologyId) => fetchTopologySnapshot(topologyId),
+    loadSnapshot,
   };
 }
 

@@ -225,3 +225,26 @@ server view, the way `dashboard` and `auth` already do it.
 `npm run check:generators` runs the generator and checks its output against the
 contract; it is part of `check:ci`. Regenerating over an existing feature
 refuses rather than overwriting.
+
+## Backend
+
+The API lives in [boilplate-server](https://github.com/fredokim/boilplate-server),
+shared with the React and Vue boilerplates. The route handlers under
+`src/app/api` forward to it; the browser never calls it directly, because the
+refresh cookie is `sameSite: lax` and would not survive a cross-origin call.
+
+```bash
+# .env.local — both, or neither
+BACKEND_URL=http://127.0.0.1:3001
+NEXT_PUBLIC_DATA_MODE=server
+```
+
+```bash
+npm run dev                # dummy data, no backend needed
+npm run check:contract     # both sides of the contract
+npm run contract:sync      # refresh contracts/openapi.json
+```
+
+The access token is kept in an HttpOnly cookie and attached server-side, so no
+page script holds it. See DEPLOYMENT.md for why WebSockets are rewritten rather
+than proxied.
