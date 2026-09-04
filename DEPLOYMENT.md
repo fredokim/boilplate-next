@@ -67,9 +67,22 @@ needed.
 
 ---
 
-## A note on testing in a hidden browser
+## Two things that look like application bugs and are not
+
+### A dev origin the server does not recognise
+
+Opening the dev server at an origin outside `allowedDevOrigins` returns 403 for
+every `_next/static` chunk. The page still server-renders, so the markup is
+there and nothing hydrates — which reads as a broken app rather than as refused
+assets. `curl` does not reproduce it, because it sends no origin at all.
+
+`next.config.ts` lists both `localhost` and `127.0.0.1`. Add any other host the
+dev server is reached by. Production is unaffected.
+
+### Testing in a hidden browser
 
 `/examples/graph` is the only route that renders behind a streaming boundary.
+
 In a browser whose document is hidden, `requestAnimationFrame` never fires and
 that boundary is never revealed — the page sits on "Loading route" while the
 server has already sent the whole thing.
