@@ -182,3 +182,27 @@ npm audit --audit-level=moderate
 - `PERFORMANCE_REPORT.md`: performance guardrails and review prompts.
 - `I18N_STRATEGY.md`: i18n fallback, formatting, and missing-key strategy.
 - `AI_CHANGELOG.md`: AI-assisted work log and verification notes.
+
+## Design tokens
+
+Colours, spacing, radii, and shadows come from `tokens/tokens.json`, which the
+React, Next.js, and Vue boilerplates share. The CSS and TypeScript files that
+declare them are generated; editing one is undone by the next build.
+
+```bash
+# after editing tokens/tokens.json
+npm run tokens:build
+```
+
+`npm run check:tokens` renders the outputs and compares them against what is
+committed, failing with the file, line, and both values when they differ. It
+runs as part of `check:ci`. It compares rather than regenerating on purpose: a
+check that rewrites the file it is checking cannot fail.
+
+A token may carry a dark value under `$extensions.mode.dark`. Nothing declares
+one yet, so no `prefers-color-scheme` block is emitted; adding one value is
+enough to produce the block.
+
+`TOKEN_INVENTORY.md` in the React repository records what the three sets looked
+like before they were merged, including two tokens that were deliberately not
+merged.
