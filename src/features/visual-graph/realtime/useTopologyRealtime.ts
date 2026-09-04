@@ -1,3 +1,4 @@
+import { watchForIdle } from "@/core/realtime/idleSuspension";
 import { useEffect, useMemo, useState, useSyncExternalStore } from "react";
 import type { GraphDocument, GraphMetadata } from "../model/graph";
 import { TopologyRealtimeController } from "./controller";
@@ -52,6 +53,24 @@ export function useTopologyRealtime<
       document.removeEventListener("visibilitychange", onVisibility);
       clearInterval(staleTimer);
     };
+  }, [controller]);
+
+
+  /**
+   * Hands the socket back when nobody is watching. An open socket is continuous
+   * traffic, so a forgotten tab keeps a free instance awake all night for the
+   * same cost as one in use.
+   *
+   * `stop()` and `start()` rather than a new pair of methods: stop already
+   * disconnects and blocks the reconnect backoff, and start resubscribes and resyncs from a fresh snapshot -- which is what a viewer who
+   * has been away needs anyway, since the retention window may have moved past
+   * them.
+   */
+  useEffect(() => {
+    return watchForIdle({
+      onIdle: () => controller.stop(),
+      onResume: () => void controller.start(),
+    });
   }, [controller]);
 
   return {
