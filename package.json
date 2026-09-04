@@ -10,6 +10,7 @@
     "lint": "eslint . --max-warnings=0",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
+    "test:coverage": "vitest run --coverage",
     "check:contract": "vitest run src/test/contract",
     "contract:sync": "node -e \"require('node:fs').copyFileSync(process.env.SERVER_REPO ? process.env.SERVER_REPO + '/openapi.json' : '../boilplate-server/openapi.json', 'contracts/openapi.json')\"",
     "storybook": "storybook dev -p 6008 --disable-telemetry",
@@ -27,7 +28,9 @@
     "check:deps": "tsx scripts/check-dependency-size.ts",
     "tokens:build": "tsx scripts/build-tokens.ts",
     "check:tokens": "tsx scripts/check-tokens.ts",
-    "check:ci": "npm run check:tokens && npm run lint && npm run typecheck && npm run test && npm run check:contract && npm run check:ai && npm run check:automation && npm run check:generators && npm run check:deps && npm run build && npm run check:bundle && npm run build-storybook"
+    "check:ci": "npm run check:tokens && npm run lint && npm run typecheck && npm run test && npm run check:contract && npm run check:ai && npm run check:automation && npm run check:generators && npm run check:deps && npm run build && npm run check:bundle && npm run build-storybook",
+    "preperf:lighthouse": "npm run build",
+    "perf:lighthouse": "npx -y @lhci/cli@0.15.1 autorun --config=./lighthouserc.cjs"
   },
   "dependencies": {
     "@dagrejs/dagre": "^3.1.1",
@@ -59,6 +62,7 @@
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "@vitest/coverage-v8": "^4.1.7",
     "axe-core": "^4.11.4",
     "eslint": "^9",
     "eslint-config-next": "16.2.6",
