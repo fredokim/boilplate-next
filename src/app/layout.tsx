@@ -15,8 +15,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "WOD Planner",
-  description: "Manual WOD analysis and recovery-aware workout recommendations.",
+  title: "Next Boilerplate",
+  description: "App Router patterns for server boundaries, realtime features, and a shared backend.",
 };
 
 export default function RootLayout({
