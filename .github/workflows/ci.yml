@@ -16,6 +16,11 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
+      # These three are in `check:ci` and were not in this workflow, so the
+      # token gate and the generator gate -- the two things plan items 1 and 2
+      # exist to enforce -- never ran on a pull request. A gate nobody runs is
+      # a gate that does not exist.
+      - run: npm run check:tokens
       - run: npm run lint
       - run: npm run typecheck
       - run: npm run test
@@ -24,9 +29,21 @@ jobs:
       - run: npm run check:contract
       - run: npm run check:ai
       - run: npm run check:automation
+      - run: npm run check:generators
+      - run: npm run check:deps
       - run: npm run build
       - run: npm run check:bundle
       - run: npm run build-storybook
+      # The e2e suite existed and CI never ran it. In the Vue boilerplate the
+      # same omission hid a router name collision that left the first page a
+      # user sees completely blank, with every other gate green throughout:
+      # unit tests render components in isolation and cannot see a navigation
+      # that never settles.
+      #
+      # The config pinned `channel: msedge`, which no Linux runner has. It now
+      # falls back to the Chromium Playwright installs, as the other two do.
+      - run: npx playwright install --with-deps chromium
+      - run: npm run e2e
       # Production dependencies only. The remaining dev-tree advisory is image-size,
       # reached through @storybook/nextjs-vite, and it has no upstream fix.
       - run: npm audit --omit=dev --audit-level=moderate
