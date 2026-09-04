@@ -1,4 +1,15 @@
-import { createApiSuccess, dummyAuditLogs, dummyDashboardSummary, dummyNotifications, dummySession, dummyUsers } from "./dummyData";
+import {
+  createApiSuccess,
+  dummyAuditLogs,
+  dummyDashboardKpi,
+  dummyDashboardSeries,
+  dummyDashboardSummary,
+  dummyDashboardTable,
+  dummyNotifications,
+  dummySession,
+  dummyUsers,
+  emptyDashboardWidgetData,
+} from "./dummyData";
 
 export type MockRegistryEntry = {
   method: "GET" | "POST" | "PATCH" | "PUT" | "DELETE";
@@ -41,6 +52,24 @@ export const mockRegistry = [
     method: "GET",
     endpoint: "/api/dashboard/summary",
     success: createApiSuccess(dummyDashboardSummary),
+  },
+  {
+    method: "GET",
+    endpoint: "/api/dashboard/kpi",
+    success: createApiSuccess(dummyDashboardKpi),
+    empty: createApiSuccess(emptyDashboardWidgetData.kpi),
+  },
+  {
+    method: "GET",
+    endpoint: "/api/dashboard/chart",
+    success: createApiSuccess(dummyDashboardSeries),
+    empty: createApiSuccess(emptyDashboardWidgetData.series),
+  },
+  {
+    method: "GET",
+    endpoint: "/api/dashboard/table",
+    success: createApiSuccess(dummyDashboardTable),
+    empty: createApiSuccess(emptyDashboardWidgetData.table),
   },
   {
     method: "GET",

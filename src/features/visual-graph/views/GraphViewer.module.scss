@@ -1,0 +1,275 @@
+.page {
+  display: grid;
+  gap: var(--space-5);
+}
+
+.heading {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-4);
+}
+
+.title {
+  margin: 0;
+  color: var(--color-ink);
+  font-size: 24px;
+  font-weight: 900;
+}
+
+.subtitle {
+  margin: var(--space-2) 0 0;
+  color: var(--color-muted);
+  font-size: 14px;
+}
+
+.headingActions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.connection {
+  border-radius: 999px;
+  padding: 4px var(--space-3);
+  background: #fef3c7;
+  color: #78350f;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.connectionOnline {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.summaryRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.summaryChip {
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  padding: var(--space-2) var(--space-3);
+  font-size: 14px;
+}
+
+.summaryChip strong {
+  text-transform: capitalize;
+}
+
+.filterField {
+  display: grid;
+  margin-left: auto;
+  gap: var(--space-1);
+  color: var(--color-muted);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.filterSelect,
+.nodeSelectControl {
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-md);
+  background: var(--color-panel);
+  padding: 0 var(--space-3);
+  color: var(--color-ink);
+  font-size: 14px;
+}
+
+.filterSelect {
+  height: 36px;
+}
+
+.nodeSelectControl {
+  height: 44px;
+}
+
+.searchGrid {
+  display: grid;
+  gap: var(--space-4);
+}
+
+@media (min-width: 1280px) {
+  .searchGrid {
+    grid-template-columns: minmax(240px, 1fr) repeat(2, minmax(180px, 0.7fr)) auto;
+    align-items: end;
+  }
+}
+
+.searchAnchor {
+  position: relative;
+}
+
+.suggestions {
+  position: absolute;
+  z-index: 10;
+  display: grid;
+  max-height: 224px;
+  width: 100%;
+  margin-top: var(--space-1);
+  overflow: auto;
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-md);
+  background: var(--color-panel);
+  padding: var(--space-1);
+  box-shadow: var(--shadow-sm);
+}
+
+.suggestion {
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  padding: var(--space-2) var(--space-3);
+  cursor: pointer;
+  text-align: left;
+  font-size: 14px;
+}
+
+.suggestion:hover {
+  background: var(--color-surface);
+}
+
+.suggestionLabel {
+  display: block;
+  color: var(--color-ink);
+}
+
+.suggestionId {
+  color: var(--color-muted);
+  font-size: 12px;
+}
+
+.nodeSelectField {
+  display: grid;
+  gap: var(--space-2);
+  color: var(--color-ink);
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.alert {
+  margin: var(--space-3) 0 0;
+  border-radius: var(--radius-md);
+  padding: var(--space-2) var(--space-3);
+  background: #fffbeb;
+  color: #92400e;
+  font-size: 14px;
+}
+
+.alertError {
+  background: #fef2f2;
+  color: var(--color-danger);
+}
+
+.viewportActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.layout {
+  display: grid;
+  gap: var(--space-5);
+}
+
+@media (min-width: 1280px) {
+  .layout {
+    grid-template-columns: minmax(0, 1fr) 320px;
+  }
+}
+
+.sidebar {
+  display: grid;
+  align-content: start;
+  gap: var(--space-5);
+}
+
+.routeList {
+  display: grid;
+  margin: 0;
+  gap: var(--space-2);
+  padding: 0;
+  list-style: none;
+}
+
+.routeStep {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  gap: var(--space-3);
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-md);
+  background: transparent;
+  padding: var(--space-2);
+  cursor: pointer;
+  text-align: left;
+}
+
+.routeStep:hover {
+  background: var(--color-surface);
+}
+
+.routeIndex {
+  display: grid;
+  height: 28px;
+  width: 28px;
+  flex: 0 0 28px;
+  place-items: center;
+  border-radius: 999px;
+  background: #eff6ff;
+  color: var(--color-primary);
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.routeLabel {
+  display: block;
+  color: var(--color-ink);
+  font-size: 14px;
+}
+
+.routeType {
+  color: var(--color-muted);
+}
+
+.empty {
+  margin: 0;
+  color: var(--color-muted);
+  font-size: 14px;
+}
+
+.metadata {
+  display: grid;
+  margin: 0;
+  gap: var(--space-3);
+  font-size: 14px;
+}
+
+.metadataKey {
+  color: var(--color-muted);
+  font-weight: 700;
+  text-transform: capitalize;
+}
+
+.metadataValue {
+  margin: var(--space-1) 0 0;
+  overflow-wrap: break-word;
+  color: var(--color-ink);
+}
+
+.history {
+  margin-top: var(--space-4);
+  border-top: 1px solid var(--color-line);
+  padding-top: var(--space-3);
+  color: var(--color-muted);
+  font-size: 12px;
+}
+
+.historyRow {
+  margin: var(--space-1) 0 0;
+}

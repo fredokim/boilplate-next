@@ -1,4 +1,6 @@
 import { NextResponse } from "next/server";
+import { proxyToBackend } from "@/core/api/backendProxy";
+import { isServerBacked } from "@/core/config/backend";
 import { createApiError, createApiSuccess, dummyUsers } from "@/core/mock/dummyData";
 
 type RouteContext = {
@@ -7,8 +9,11 @@ type RouteContext = {
   }>;
 };
 
-export async function GET(_: Request, context: RouteContext) {
+export async function GET(request: Request, context: RouteContext) {
   const { id } = await context.params;
+
+  if (isServerBacked) return proxyToBackend(request, `/api/users/${id}`);
+
   const user = dummyUsers.find((item) => item.id === id);
 
   if (!user) {

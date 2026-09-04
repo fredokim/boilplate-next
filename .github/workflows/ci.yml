@@ -19,8 +19,14 @@ jobs:
       - run: npm run lint
       - run: npm run typecheck
       - run: npm run test
+      # Two directions: what the route handlers forward must exist on the
+      # backend, and what the client calls must be answered here.
+      - run: npm run check:contract
+      - run: npm run check:ai
       - run: npm run check:automation
       - run: npm run build
       - run: npm run check:bundle
       - run: npm run build-storybook
-      - run: npm audit --audit-level=moderate
+      # Production dependencies only. The remaining dev-tree advisory is image-size,
+      # reached through @storybook/nextjs-vite, and it has no upstream fix.
+      - run: npm audit --omit=dev --audit-level=moderate

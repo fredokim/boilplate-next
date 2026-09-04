@@ -166,10 +166,15 @@ npm audit --audit-level=moderate
 
 ## More Docs
 
+- `DESIGN_RATIONALE.md`: problem definition, component design method, key decisions, results, and retrospective.
 - `ARCHITECTURE.md`: ownership rules and server/client boundaries.
 - `BOUNDARY_GUIDE.md`: detailed App Router boundary guide.
 - `CONTRIBUTING.md`: checklist for feature and UI additions.
 - `DEPENDENCY_STRATEGY.md`: package replacement and dependency review rules.
+- `AI_DEVELOPMENT_GUIDE.md`: rules for AI-assisted implementation in the App Router.
+- `API_CONTRACT.md`: response envelope, the server/client clients, and failure classification.
+- `VISUAL_GRAPH.md`: layer map, client boundary, realtime pipeline, and editing model for the graph example.
+- `REALTIME_INTEGRATION.md`: binding the streaming layer inside the App Router, hydration rules, and where the stream may start.
 - `AI_WORKFLOW.md`: AI-assisted frontend workflow and verification gates.
 - `PROMPT_PLAYBOOK.md`: reusable prompts for implementation, review, refactoring, and testing.
 - `CODE_REVIEW_CHECKLIST.md`: senior FE review checklist for AI-generated code.
@@ -177,3 +182,69 @@ npm audit --audit-level=moderate
 - `PERFORMANCE_REPORT.md`: performance guardrails and review prompts.
 - `I18N_STRATEGY.md`: i18n fallback, formatting, and missing-key strategy.
 - `AI_CHANGELOG.md`: AI-assisted work log and verification notes.
+
+## Design tokens
+
+Colours, spacing, radii, and shadows come from `tokens/tokens.json`, which the
+React, Next.js, and Vue boilerplates share. The CSS and TypeScript files that
+declare them are generated; editing one is undone by the next build.
+
+```bash
+# after editing tokens/tokens.json
+npm run tokens:build
+```
+
+`npm run check:tokens` renders the outputs and compares them against what is
+committed, failing with the file, line, and both values when they differ. It
+runs as part of `check:ci`. It compares rather than regenerating on purpose: a
+check that rewrites the file it is checking cannot fail.
+
+A token may carry a dark value under `$extensions.mode.dark`. Nothing declares
+one yet, so no `prefers-color-scheme` block is emitted; adding one value is
+enough to produce the block.
+
+`TOKEN_INVENTORY.md` in the React repository records what the three sets looked
+like before they were merged, including two tokens that were deliberately not
+merged.
+
+## Feature generator
+
+```bash
+npm run generate:feature -- billing-report
+```
+
+Writes both halves: the view, its stylesheet, story, and test under
+`src/features/`, and `page.tsx` under `src/app/`. Routing here is the file
+system, so a feature folder alone reaches nothing.
+
+The generated view is a **server component**, and `check:generators` fails if
+that ever changes. Interactivity belongs in a `.client.tsx` rendered from the
+server view, the way `dashboard` and `auth` already do it.
+
+`FEATURE_CONTRACT.md` records what a generated feature contains and why.
+`npm run check:generators` runs the generator and checks its output against the
+contract; it is part of `check:ci`. Regenerating over an existing feature
+refuses rather than overwriting.
+
+## Backend
+
+The API lives in [boilplate-server](https://github.com/fredokim/boilplate-server),
+shared with the React and Vue boilerplates. The route handlers under
+`src/app/api` forward to it; the browser never calls it directly, because the
+refresh cookie is `sameSite: lax` and would not survive a cross-origin call.
+
+```bash
+# .env.local — both, or neither
+BACKEND_URL=http://127.0.0.1:3001
+NEXT_PUBLIC_DATA_MODE=server
+```
+
+```bash
+npm run dev                # dummy data, no backend needed
+npm run check:contract     # both sides of the contract
+npm run contract:sync      # refresh contracts/openapi.json
+```
+
+The access token is kept in an HttpOnly cookie and attached server-side, so no
+page script holds it. See DEPLOYMENT.md for why WebSockets are rewritten rather
+than proxied.

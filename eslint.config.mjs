@@ -14,6 +14,19 @@ const eslintConfig = defineConfig([
     "build/**",
     "next-env.d.ts",
     "storybook-static/**",
+    // Agent worktrees are full checkouts nested inside the repo; linting them
+    // reports every problem twice and drowns real findings.
+    ".claude/worktrees/**",
+    // The WOD planner is a separate application that happens to live in this repo.
+    // It is not part of the boilerplate and is maintained on its own track, so it
+    // must not gate the boilerplate's CI. Remove these once it moves out.
+    "src/components/WodPlanner.client.tsx",
+    "src/components/Wod*.tsx",
+    "src/components/WeeklyLoadView.tsx",
+    "src/components/RecommendationCard.tsx",
+    "src/crawler/**",
+    "src/parser/**",
+    "src/planner/**",
   ]),
   {
     rules: {

@@ -47,6 +47,16 @@ Changes:
 - `OpsTableView` renders rows and can be reused by server-fed data.
 - Regression tests cover filtering and status labels without mounting React.
 
+## Human Decisions
+
+These stay with the developer on every refactor, not just this one:
+
+- Decide whether state is local, URL, server-fetched, or Zustand.
+- Decide where the server/client boundary belongs before moving any code across it.
+- Decide which logic must be extracted before AI-generated changes continue.
+- Keep dependency additions out unless the use case is proven.
+- Require lint, typecheck, test, build, and E2E for user-facing changes.
+
 ## Human Review Decisions
 
 - Kept search state local because it is not shareable route state yet.
