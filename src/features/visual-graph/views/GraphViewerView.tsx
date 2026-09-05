@@ -1,3 +1,4 @@
+import { connectionStatus } from "@/core/realtime/connectionStatus";
 import { useDeferredValue, useEffect, useMemo, useRef, useState } from "react";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
@@ -37,6 +38,12 @@ function formatMetadataValue(value: unknown): string {
   if (value === null || value === undefined) return "—";
   return JSON.stringify(value);
 }
+
+const TONE_CLASS = {
+  ok: styles.connectionOk,
+  busy: styles.connectionBusy,
+  bad: styles.connectionBad,
+} as const;
 
 export function GraphViewerView<
   TNodeType extends string,
@@ -122,10 +129,11 @@ export function GraphViewerView<
         </div>
         <div className={styles.headingActions}>
           <span
-            className={[styles.connection, connectionState === "connected" ? styles.connectionOnline : ""].join(" ")}
+            className={[styles.connection, TONE_CLASS[connectionStatus(connectionState).tone]].join(" ")}
+            title={connectionStatus(connectionState).detail}
             role="status"
           >
-            Realtime: {connectionState}
+            Realtime: {connectionStatus(connectionState).label}
           </span>
           <Button onClick={onEdit}>Edit topology</Button>
         </div>

@@ -130,17 +130,26 @@
   text-transform: capitalize;
 }
 
-.statusConnected {
+/**
+ * By tone, not by state. There are seven states and three things a reader needs
+ * to know: it is fine, it is working on it, or it is broken. Keying to the state
+ * meant a new state arrived unstyled, and a paused connection -- which is fine --
+ * would have inherited the colour of a failure.
+ *
+ * #854d0e on #fef3c7 rather than #a16207, which is 4.42:1 and misses AA for
+ * text this size.
+ */
+.statusOk {
   background: #dcfce7;
   color: var(--color-success);
 }
 
-.statusConnecting {
+.statusBusy {
   background: #fef3c7;
-  color: #a16207;
+  color: #854d0e;
 }
 
-.statusOffline {
+.statusBad {
   background: #fee2e2;
   color: #b91c1c;
 }

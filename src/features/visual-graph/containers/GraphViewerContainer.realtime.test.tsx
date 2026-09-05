@@ -29,7 +29,7 @@ describe("GraphViewerContainer realtime wiring", () => {
     );
 
     // StrictMode mounts, unmounts, and remounts the effect. The controller must end connected.
-    await waitFor(() => expect(screen.getByRole("status")).toHaveTextContent("Realtime: connected"), { timeout: 3000 });
+    await waitFor(() => expect(screen.getByRole("status")).toHaveTextContent("Realtime: Live"), { timeout: 3000 });
 
     // The snapshot resync populates runtime state for every node and edge in the graph.
     await waitFor(() => expect(debugValue("runtimeStateCount")).toBe(networkGraph.nodes.length + networkGraph.edges.length), {

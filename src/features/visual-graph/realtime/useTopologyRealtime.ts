@@ -61,15 +61,16 @@ export function useTopologyRealtime<
    * traffic, so a forgotten tab keeps a free instance awake all night for the
    * same cost as one in use.
    *
-   * `stop()` and `start()` rather than a new pair of methods: stop already
-   * disconnects and blocks the reconnect backoff, and start resubscribes and resyncs from a fresh snapshot -- which is what a viewer who
+   * `suspend()` and `resume()` rather than stop and start: stop already
+   * disconnects and blocks the reconnect backoff, but lands on `disconnected`,
+   * the state that means a fault. Suspending says which happened; resuming resubscribes and resyncs from a fresh snapshot -- which is what a viewer who
    * has been away needs anyway, since the retention window may have moved past
    * them.
    */
   useEffect(() => {
     return watchForIdle({
-      onIdle: () => controller.stop(),
-      onResume: () => void controller.start(),
+      onIdle: () => controller.suspend(),
+      onResume: () => void controller.resume(),
     });
   }, [controller]);
 

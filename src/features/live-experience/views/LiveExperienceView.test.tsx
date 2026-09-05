@@ -58,7 +58,7 @@ describe("LiveExperienceView", () => {
   it("surfaces the connection state in both the header and the debug footer", () => {
     render(<LiveExperienceView chatDiagnostics={diagnostics} chatMessages={[]} connectionState="error" videoSource={videoSource} />);
 
-    expect(within(screen.getByLabelText("Realtime chat")).getByText("error")).toBeInTheDocument();
-    expect(within(screen.getByLabelText("Chat debug information")).getByText("Connection: error")).toBeInTheDocument();
+    expect(within(screen.getByLabelText("Realtime chat")).getByText("Error")).toBeInTheDocument();
+    expect(within(screen.getByLabelText("Chat debug information")).getByText("Connection: Error")).toBeInTheDocument();
   });
 });

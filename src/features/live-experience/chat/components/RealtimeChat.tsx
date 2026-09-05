@@ -1,5 +1,6 @@
 "use client";
 
+import { connectionStatus } from "@/core/realtime/connectionStatus";
 import { memo, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { useVirtualizer } from "@tanstack/react-virtual";
 import type { ChatMessage } from "../model/chatMessage";
@@ -21,20 +22,19 @@ const PIN_THRESHOLD_PX = 24;
 /** Matches the .messages height in the stylesheet. */
 const CHAT_VIEWPORT_HEIGHT_PX = 420;
 
-const statusClass: Record<ChatConnectionState, string | undefined> = {
-  idle: undefined,
-  connecting: styles.statusConnecting,
-  reconnecting: styles.statusConnecting,
-  connected: styles.statusConnected,
-  disconnected: styles.statusOffline,
-  error: styles.statusOffline,
-};
+const TONE_CLASS = {
+  ok: styles.statusOk,
+  busy: styles.statusBusy,
+  bad: styles.statusBad,
+} as const;
 
 export const RealtimeChat = memo(function RealtimeChat({
   connectionState,
   diagnostics,
   messages,
 }: RealtimeChatProps) {
+  // The state names the code uses are not the words to show a reader.
+  const status = connectionStatus(connectionState);
   const [scrollElement, setScrollElement] = useState<HTMLDivElement | null>(null);
   const [pinned, setPinned] = useState(true);
   const pinnedRef = useRef(pinned);
@@ -89,7 +89,13 @@ export const RealtimeChat = memo(function RealtimeChat({
           <h2 className={styles.sectionTitle}>Live chat</h2>
           <p className={styles.sectionHint}>Buffered, de-duplicated, and capped at {messages.length} shown</p>
         </div>
-        <span className={[styles.status, statusClass[connectionState] ?? ""].join(" ")}>{connectionState}</span>
+        <span
+          className={[styles.status, TONE_CLASS[status.tone] ?? ""].join(" ")}
+          role="status"
+          title={status.detail}
+        >
+          {status.label}
+        </span>
       </header>
 
       <div className={styles.viewport}>
@@ -144,7 +150,7 @@ export const RealtimeChat = memo(function RealtimeChat({
         <span>Shown: {messages.length}</span>
         <span>Rendered: {virtualItems.length}</span>
         <span>Dropped: {diagnostics.droppedByCapacity + diagnostics.droppedTooOld}</span>
-        <span>Connection: {connectionState}</span>
+        <span>Connection: {status.label}</span>
       </footer>
     </section>
   );
