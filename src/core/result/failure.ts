@@ -1,5 +1,5 @@
 export type FailureOrigin = "frontend-contract" | "backend" | "network" | "auth" | "unknown";
-export type FailureKind = "validation" | "unauthorized" | "forbidden" | "not-found" | "server" | "unknown";
+export type FailureKind = "waking" | "validation" | "unauthorized" | "forbidden" | "not-found" | "server" | "unknown";
 
 export type AppFailure = {
   origin: FailureOrigin;
