@@ -38,6 +38,47 @@ describe("ChatController", () => {
       expect(controller.getConnectionState()).toBe("suspended");
     });
 
+    /**
+     * The one a reader actually sees.
+     *
+     * `useRealtimeChat` used to subscribe to the transport, so the controller
+     * knowing it had suspended was never enough — the screen read the transport
+     * and painted `disconnected`. This asserts the state at the source the
+     * interface listens to, which is now the controller.
+     */
+    it("tells a connection subscriber the release was deliberate", async () => {
+      const { controller } = setup();
+      const seen: string[] = [];
+      void controller.start();
+      await vi.advanceTimersByTimeAsync(20);
+      controller.subscribeConnection((state) => seen.push(state));
+
+      controller.suspend();
+
+      expect(seen).toContain("suspended");
+      expect(seen).not.toContain("disconnected");
+    });
+
+    /**
+     * `reconnecting` exists only between a drop and the next attempt, and only
+     * the controller knows about it — the transport reports the drop as
+     * `disconnected` and the retry as `connecting`. A reader subscribed to the
+     * transport therefore never saw the state the vocabulary defines, so the
+     * subscription has to come from here.
+     */
+    it("tells a subscriber it is retrying, not merely disconnected", async () => {
+      const { controller, transport } = setup();
+      const seen: string[] = [];
+      void controller.start();
+      await vi.advanceTimersByTimeAsync(20);
+      controller.subscribeConnection((state) => seen.push(state));
+
+      transport.simulateDrop();
+
+      expect(seen).toContain("reconnecting");
+      expect(controller.getConnectionState()).toBe("reconnecting");
+    });
+
     it("does not reconnect while suspended", async () => {
       const { controller, transport } = setup();
       void controller.start();
