@@ -24,7 +24,7 @@ export const ChartWidget = memo(function ChartWidget({ widget }: ChartWidgetProp
   return (
     <div className={styles.widgetStack}>
       <p className={styles.widgetLabel}>{widget.config.title}</p>
-      <WidgetDataBoundary error={query.error} isEmpty={points.length === 0} isPending={query.isPending}>
+      <WidgetDataBoundary error={query.error} onRetry={() => void query.refetch()} isEmpty={points.length === 0} isPending={query.isPending}>
         <div aria-label={`${widget.config.title} ${widget.config.chartType} chart`} className={styles.chartWrap}>
           <XYChart
             height={210}

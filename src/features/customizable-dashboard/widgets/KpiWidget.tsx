@@ -17,7 +17,7 @@ export const KpiWidget = memo(function KpiWidget({ widget }: KpiWidgetProps) {
   return (
     <div className={styles.widgetStack}>
       <p className={styles.widgetLabel}>{widget.config.title}</p>
-      <WidgetDataBoundary error={query.error} isEmpty={isEmpty} isPending={query.isPending}>
+      <WidgetDataBoundary error={query.error} onRetry={() => void query.refetch()} isEmpty={isEmpty} isPending={query.isPending}>
         <div>
           <p className={styles.muted}>{query.data?.label}</p>
           <p className={styles.widgetValue}>{query.data?.value?.toLocaleString()}</p>

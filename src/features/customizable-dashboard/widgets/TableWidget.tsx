@@ -32,7 +32,7 @@ export const TableWidget = memo(function TableWidget({ widget }: TableWidgetProp
   return (
     <div className={styles.widgetStack}>
       <p className={styles.widgetLabel}>{widget.config.title}</p>
-      <WidgetDataBoundary error={query.error} isEmpty={rows.length === 0} isPending={query.isPending}>
+      <WidgetDataBoundary error={query.error} onRetry={() => void query.refetch()} isEmpty={rows.length === 0} isPending={query.isPending}>
         <div>
           <div className={styles.virtualTableHeader}>
             {query.data?.columns.map((column) => <strong key={column.key}>{column.label}</strong>)}
