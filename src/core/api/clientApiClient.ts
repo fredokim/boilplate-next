@@ -2,6 +2,7 @@ import { createApiEnvelopeDto } from "@/core/api/ApiEnvelope.dto";
 import { TypedAppError } from "@/core/result/failure";
 import { parseDto } from "@/core/validation/parseDto";
 import { RefreshSingleFlight } from "./refreshSingleFlight";
+import { ASLEEP_STATUS, serverWakeGate } from "./serverWake";
 
 /**
  * Exchanges the refresh cookie for a new access token, or returns null.
@@ -67,6 +68,11 @@ async function attempt<TData extends object>(
   DataDto: new () => TData,
   retried: boolean,
 ): Promise<TData> {
+  // Free of charge unless the server is known to be asleep, in which case this
+  // waits for the one probe rather than adding another request to a pile the
+  // platform is already refusing.
+  await serverWakeGate.wait();
+
   let response: Response;
   try {
     response = await fetch(buildUrl(request), {
@@ -95,6 +101,22 @@ async function attempt<TData extends object>(
   try {
     payload = await response.json();
   } catch (error) {
+    // A 429 with no envelope did not come from the API. This app's own 429s --
+    // the login throttle and the chat rate limit -- are JSON like every other
+    // answer, so a body that will not parse means the host refused to wake a
+    // sleeping instance.
+    if (response.status === ASLEEP_STATUS) {
+      serverWakeGate.reportAsleep();
+
+      throw new TypedAppError({
+        origin: "network",
+        kind: "waking",
+        message: "The server was idle and is starting.",
+        status: response.status,
+        details: error,
+      });
+    }
+
     throw new TypedAppError({
       origin: "backend",
       kind: response.ok ? "unknown" : "server",
