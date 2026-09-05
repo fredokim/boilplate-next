@@ -13,6 +13,7 @@ import {
   TableDataDto,
   TableRowDto,
 } from "@/features/customizable-dashboard/data/dashboardDataSource.dto";
+import { ChatMessageResponseDto } from "@/features/live-experience/chat/realtime/serverChat.dto";
 import { OpsConsoleDto, OpsIncidentDto, OpsMetricDto, OpsReleaseDto } from "@/features/ops/dto/OpsConsole.dto";
 import { UserDto, UserListDto } from "@/features/user/dto/User.dto";
 import { TopologySnapshotDto } from "@/features/visual-graph/realtime/topologySnapshot.dto";
@@ -65,6 +66,11 @@ const MAPPED: readonly (readonly [Constructor, string])[] = [
   [UserDto, "UserResponseDto"],
   [UserListDto, "UserListResponseDto"],
   [TopologySnapshotDto, "TopologySnapshotDto"],
+  /**
+   * Chat arrives here only over the socket, so this pairing is what makes the
+   * frame validation answer to the same contract the HTTP endpoints do.
+   */
+  [ChatMessageResponseDto, "ChatMessageDto"],
 ];
 
 /**
@@ -176,6 +182,7 @@ describeIfSpec("coverage", () => {
       UserDto,
       UserListDto,
       TopologySnapshotDto,
+      ChatMessageResponseDto,
     ].map((Dto) => Dto.name);
 
     expect(exported.filter((name) => !declared.has(name))).toEqual([]);
