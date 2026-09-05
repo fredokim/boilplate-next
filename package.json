@@ -12,7 +12,7 @@
     "test": "vitest run",
     "test:coverage": "vitest run --coverage",
     "check:contract": "vitest run src/test/contract",
-    "contract:sync": "node -e \"require('node:fs').copyFileSync(process.env.SERVER_REPO ? process.env.SERVER_REPO + '/openapi.json' : '../boilplate-server/openapi.json', 'contracts/openapi.json')\"",
+    "contract:sync": "tsx scripts/sync-contract.ts",
     "storybook": "storybook dev -p 6008 --disable-telemetry",
     "build-storybook": "storybook build --disable-telemetry",
     "e2e": "playwright test",
