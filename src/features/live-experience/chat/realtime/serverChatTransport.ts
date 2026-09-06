@@ -1,4 +1,5 @@
 import type { ChatMessage } from "../model/chatMessage";
+import { parseServerChatFrame } from "./serverChatFrame";
 import type { ChatConnectionState, ChatTransport, Unsubscribe } from "./types";
 
 /**
@@ -27,14 +28,6 @@ export type ServerChatMessage = {
   sentAt: string;
   deleted: boolean;
 };
-
-type ServerFrame =
-  | { type: "ready"; connectionId: string }
-  | { type: "joined"; broadcastId: string; replayed: number }
-  | { type: "message"; message: ServerChatMessage }
-  | { type: "deleted"; messageId: string; sequence: number }
-  | { type: "heartbeat" | "pong"; at: number }
-  | { type: "error"; code: string; message: string };
 
 /**
  * The server has no avatar field, and inventing one per author would put a face
@@ -111,11 +104,9 @@ export class ServerChatTransport implements ChatTransport {
   }
 
   private handleFrame(data: unknown): void {
-    const frame = this.parse(data);
+    const frame = parseServerChatFrame(data);
 
-    if (!frame) return;
-
-    if (frame.type === "deleted") {
+    if (frame.kind === "deleted") {
       // A tombstone has no place in a transcript the page models as
       // append-only. Its sequence still counts, or the next reconnect asks for
       // messages the server already sent.
@@ -123,28 +114,12 @@ export class ServerChatTransport implements ChatTransport {
       return;
     }
 
-    if (frame.type !== "message") return;
+    if (frame.kind !== "message") return;
 
     this.lastSequence = Math.max(this.lastSequence, frame.message.sequence);
 
     const message = toChatMessage(frame.message);
     this.messageListeners.forEach((listener) => listener(message));
-  }
-
-  /** A malformed frame is dropped rather than tearing down a working stream. */
-  private parse(data: unknown): ServerFrame | null {
-    if (typeof data !== "string") return null;
-
-    try {
-      const parsed: unknown = JSON.parse(data);
-
-      if (typeof parsed !== "object" || parsed === null) return null;
-      if (typeof (parsed as { type?: unknown }).type !== "string") return null;
-
-      return parsed as ServerFrame;
-    } catch {
-      return null;
-    }
   }
 
   private send(message: { event: string; data: unknown }): void {
