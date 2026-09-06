@@ -9,6 +9,7 @@ const videoSource: VideoSource = { kind: "progressive", src: "/media/sample.mp4"
 
 const message: ChatMessage = {
   id: "m-1",
+  sequence: 1,
   userId: "user-mina",
   displayName: "Mina",
   profileImageUrl: "/avatars/mina.svg",
