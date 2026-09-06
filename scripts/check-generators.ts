@@ -3,7 +3,7 @@ import { existsSync, readFileSync, readdirSync, rmSync, statSync } from "node:fs
 import { join, resolve } from "node:path";
 
 /**
- * Runs the feature generator and checks its output against FEATURE_CONTRACT.md.
+ * Runs the feature generator and checks its output against docs/development/FEATURE_CONTRACT.md.
  *
  * The previous automation check asserted that four generator *files existed*.
  * It never ran one, and feature generation was not among the four — so a
@@ -130,8 +130,8 @@ if (!entryPoint.includes("scripts/generate-feature.ts")) {
 
 if (failures.length > 0) {
   console.error(failures.map((failure) => `- ${failure}`).join("\n"));
-  console.error("\nSee FEATURE_CONTRACT.md for what a generated feature must contain.");
+  console.error("\nSee docs/development/FEATURE_CONTRACT.md for what a generated feature must contain.");
   process.exit(1);
 }
 
-console.log("[generators] Generated features match FEATURE_CONTRACT.md.");
+console.log("[generators] Generated features match docs/development/FEATURE_CONTRACT.md.");
