@@ -18,9 +18,9 @@ export type ChatControllerOptions = {
    * at all.
    */
   coldReconnectBaseMs?: number;
-  reconnectMaxMs?: number;
   /** Awaited before each connect, so a burst becomes one wake-up attempt. */
   waitForServer?: () => Promise<void>;
+  reconnectMaxMs?: number;
   random?: () => number;
 };
 
@@ -29,8 +29,8 @@ export class ChatController {
   private readonly hiddenFlushIntervalMs: number;
   private readonly reconnectBaseMs: number;
   private readonly coldReconnectBaseMs: number;
-  private readonly reconnectMaxMs: number;
   private hasConnected = false;
+  private readonly reconnectMaxMs: number;
   private readonly random: () => number;
   private flushTimer: ReturnType<typeof setInterval> | null = null;
   private reconnectTimer: ReturnType<typeof setTimeout> | null = null;
@@ -85,9 +85,9 @@ export class ChatController {
   /**
    * Releases the connection without calling it a failure.
    *
-   * `stop()` would do the same work, but it lands on `disconnected` -- the
-   * state that means something broke. Idle release is not a fault and must not
-   * read as one, so it has its own state and its own way back.
+   * `stop()` would do the same work, but it lands on `disconnected` — the state
+   * that means something broke. Idle release is not a fault and must not read
+   * as one, so it has its own state and its own way back.
    */
   suspend() {
     if (this.manuallyStopped) return;
