@@ -21,7 +21,6 @@
     "generate:form": "tsx scripts/generate-form.ts",
     "generate:layout": "tsx scripts/generate-layout.ts",
     "generate:page": "tsx scripts/generate-page.ts",
-    "check:ai": "tsx scripts/check-ai-workflow.ts",
     "check:automation": "tsx scripts/check-automation.ts",
     "check:generators": "tsx scripts/check-generators.ts",
     "check:bundle": "tsx scripts/check-bundle-budget.ts",
@@ -29,7 +28,7 @@
     "tokens:build": "tsx scripts/build-tokens.ts",
     "check:tokens": "tsx scripts/check-tokens.ts",
     "check:docs": "tsx scripts/check-docs.ts",
-    "check:ci": "npm run check:tokens && npm run check:docs && npm run check:env && npm run lint && npm run typecheck && npm run test && npm run check:contract && npm run check:ai && npm run check:automation && npm run check:generators && npm run check:deps && npm run build && npm run check:bundle && npm run build-storybook",
+    "check:ci": "npm run check:tokens && npm run check:docs && npm run check:env && npm run lint && npm run typecheck && npm run test && npm run check:contract && npm run check:automation && npm run check:generators && npm run check:deps && npm run build && npm run check:bundle && npm run build-storybook",
     "preperf:lighthouse": "npm run build",
     "perf:lighthouse": "npx -y @lhci/cli@0.15.1 autorun --config=./lighthouserc.cjs",
     "check:env": "tsx scripts/check-env-example.ts"

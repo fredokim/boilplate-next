@@ -164,24 +164,47 @@ npm run check:ci
 npm audit --audit-level=moderate
 ```
 
-## More Docs
+## Documentation
 
-- `DESIGN_RATIONALE.md`: problem definition, component design method, key decisions, results, and retrospective.
-- `ARCHITECTURE.md`: ownership rules and server/client boundaries.
-- `BOUNDARY_GUIDE.md`: detailed App Router boundary guide.
-- `CONTRIBUTING.md`: checklist for feature and UI additions.
-- `DEPENDENCY_STRATEGY.md`: package replacement and dependency review rules.
-- `AI_DEVELOPMENT_GUIDE.md`: rules for AI-assisted implementation in the App Router.
-- `API_CONTRACT.md`: response envelope, the server/client clients, and failure classification.
-- `VISUAL_GRAPH.md`: layer map, client boundary, realtime pipeline, and editing model for the graph example.
-- `REALTIME_INTEGRATION.md`: binding the streaming layer inside the App Router, hydration rules, and where the stream may start.
-- `AI_WORKFLOW.md`: AI-assisted frontend workflow and verification gates.
-- `PROMPT_PLAYBOOK.md`: reusable prompts for implementation, review, refactoring, and testing.
-- `CODE_REVIEW_CHECKLIST.md`: senior FE review checklist for AI-generated code.
-- `AI_REFACTORING_CASE_STUDY.md`: AI-assisted refactoring before/after sample.
-- `PERFORMANCE_REPORT.md`: performance guardrails and review prompts.
-- `I18N_STRATEGY.md`: i18n fallback, formatting, and missing-key strategy.
-- `AI_CHANGELOG.md`: AI-assisted work log and verification notes.
+Everything below is reachable from here, and `npm run check:docs` fails if a
+document stops being.
+
+**Architecture** — what the boundaries are and why
+
+- [ARCHITECTURE.md](docs/architecture/ARCHITECTURE.md) — ownership rules and server/client boundaries.
+- [BOUNDARY_GUIDE.md](docs/architecture/BOUNDARY_GUIDE.md) — the App Router boundary in detail.
+- [DESIGN_RATIONALE.md](docs/architecture/DESIGN_RATIONALE.md) — problem definition, component design method, key decisions, and retrospective.
+- [REALTIME_INTEGRATION.md](docs/architecture/REALTIME_INTEGRATION.md) — binding the stream inside the App Router, hydration rules, and where a stream may start.
+- [VISUAL_GRAPH.md](docs/architecture/VISUAL_GRAPH.md) — layer map, client boundary, realtime pipeline, and editing model for the graph example.
+
+**API** — the contract with the backend
+
+- [API_CONTRACT.md](docs/api/API_CONTRACT.md) — response envelope, the server and client API clients, and failure classification.
+- [`boilplate-server`](https://github.com/fredokim/boilplate-server) — the shared backend. Setup, request flow and envelope ownership live in its own README.
+
+**Development** — how to work in here
+
+- [CONTRIBUTING.md](docs/development/CONTRIBUTING.md) — checklist for feature and UI additions.
+- [FEATURE_CONTRACT.md](docs/development/FEATURE_CONTRACT.md) — what files a feature is made of. `npm run check:generators` enforces it.
+- [CODE_REVIEW_CHECKLIST.md](docs/development/CODE_REVIEW_CHECKLIST.md) — review checklist for AI-generated code.
+- [DEPENDENCY_STRATEGY.md](docs/development/DEPENDENCY_STRATEGY.md) — package replacement and dependency review rules.
+- [I18N_STRATEGY.md](docs/development/I18N_STRATEGY.md) — fallback, formatting, and missing-key strategy.
+- [AI_WORKFLOW.md](docs/development/AI_WORKFLOW.md) — where AI is allowed to draft and where the developer decides.
+- [AI_DEVELOPMENT_GUIDE.md](docs/development/AI_DEVELOPMENT_GUIDE.md) — rules for AI-assisted implementation in the App Router.
+- [PROMPT_PLAYBOOK.md](docs/development/PROMPT_PLAYBOOK.md) — prompts for implementation, review, refactoring, and testing.
+
+**Deployment**
+
+- [DEPLOYMENT.md](docs/deployment/DEPLOYMENT.md) — one origin, the route handlers, and what the browser must never see.
+
+**History** — records of a past state, kept rather than maintained
+
+[`docs/history/`](docs/history) holds the AI changelog, the refactoring case
+study, the performance report, and the planning prompts. They describe the
+repository as it was, so `check:docs` does not hold them to today's layout.
+
+**Ecosystem** — [BOILPLATE](https://github.com/fredokim/BOILPLATE) introduces all
+four repositories and holds the decisions that span them.
 
 ## Design tokens
 
