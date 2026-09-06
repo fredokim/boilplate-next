@@ -1,6 +1,7 @@
 import { requestDto } from "@/core/api/clientApiClient";
 import { TopologySnapshotDto } from "./topologySnapshot.dto";
 import type { TopologyRealtimeTransport, Unsubscribe } from "./transport";
+import { parseServerTopologyFrame } from "./serverTopologyFrame";
 import type { RealtimeConnectionState, TopologyRealtimeEvent, TopologyRuntimeSnapshot } from "./types";
 
 /**
@@ -28,14 +29,6 @@ export async function fetchTopologySnapshot(graphId: string): Promise<TopologyRu
     edges: response.edges as TopologyRuntimeSnapshot["edges"],
   };
 }
-
-type ServerFrame =
-  | { type: "ready"; connectionId: string }
-  | { type: "subscribed"; graphId: string; replayed: number }
-  | { type: "resync-required"; graphId: string; reason: string }
-  | { type: "event"; event: TopologyRealtimeEvent }
-  | { type: "heartbeat" | "pong"; at: number }
-  | { type: "error"; code: string; message: string };
 
 export type ServerTopologyOptions = {
   getLastSequence: () => number;
@@ -94,32 +87,18 @@ export class ServerTopologyTransport implements TopologyRealtimeTransport {
   }
 
   private handleFrame(data: unknown): void {
-    const frame = this.parse(data);
+    const frame = parseServerTopologyFrame(data);
 
-    if (!frame) return;
-
-    if (frame.type === "event") {
+    if (frame.kind === "event") {
       this.eventListeners.forEach((listener) => listener(frame.event));
       return;
     }
 
-    if (frame.type === "resync-required") this.options.onResyncRequired(frame.reason);
-  }
+    if (frame.kind === "resync-required") this.options.onResyncRequired(frame.reason);
 
-  /** A malformed frame is dropped rather than tearing down a working stream. */
-  private parse(data: unknown): ServerFrame | null {
-    if (typeof data !== "string") return null;
-
-    try {
-      const parsed: unknown = JSON.parse(data);
-
-      if (typeof parsed !== "object" || parsed === null) return null;
-      if (typeof (parsed as { type?: unknown }).type !== "string") return null;
-
-      return parsed as ServerFrame;
-    } catch {
-      return null;
-    }
+    // An `error` frame is deliberately not acted on here, as before. React sets
+    // its transport to `error` on one; this app leaves the connection alone. The
+    // difference is recorded rather than changed in a pass about validation.
   }
 
   private send(message: { event: string; data: unknown }): void {
