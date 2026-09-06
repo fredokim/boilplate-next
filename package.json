@@ -31,7 +31,8 @@
     "check:ci": "npm run check:tokens && npm run check:docs && npm run check:env && npm run lint && npm run typecheck && npm run test && npm run check:contract && npm run check:automation && npm run check:generators && npm run check:deps && npm run build && npm run check:bundle && npm run build-storybook",
     "preperf:lighthouse": "npm run build",
     "perf:lighthouse": "npx -y @lhci/cli@0.15.1 autorun --config=./lighthouserc.cjs",
-    "check:env": "tsx scripts/check-env-example.ts"
+    "check:env": "tsx scripts/check-env-example.ts",
+    "release": "tsx scripts/release.ts"
   },
   "dependencies": {
     "@dagrejs/dagre": "^3.1.1",
