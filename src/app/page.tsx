@@ -6,8 +6,9 @@ import styles from "./page.module.scss";
  * The landing page lists what this repository demonstrates.
  *
  * It used to render the WOD planner this project was started from, which meant
- * the first screen of a deployed boilerplate was an unrelated application. The
- * planner still has its own route; it is no longer what a visitor lands on.
+ * the first screen of a deployed boilerplate was an unrelated application. That
+ * was fixed by changing the landing page — and the planner itself stayed, 2,106
+ * lines of it, reachable from no route at all. It has since been removed.
  */
 type Example = {
   // `Route` rather than `string`: typed routes are on, so a link to a page that
